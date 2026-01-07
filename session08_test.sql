@@ -112,6 +112,28 @@ order by count(r.room_type) desc
 limit 1;
 
 
+-- Phần III
+-- Hiển thị những phòng có giá thuê cao hơn giá trung bình của tất cả các phòng
+select room_id 'id phòng', room_type 'loại phòng', price_per_day 'giá thuê'
+from rooms
+where price_per_day > (select avg(price_per_day) from rooms);
+
+-- Hiển thị những khách chưa từng đặt phòng
+select guest_id 'id khách', guest_name 'tên khách', phone 'số điện thoại'
+from guests
+where guest_id not in (select distinct guest_id from bookings);
+
+
+-- Tìm phòng được đặt nhiều lần nhất
+select r.room_id 'id phòng', r.room_type 'loại phòng', count(b.booking_id) 'số lần được đặt'
+from rooms r
+join bookings b on r.room_id = b.room_id
+group by r.room_id, r.room_type
+order by count(b.booking_id) desc
+limit 1;
+
+
+
 
 
 
