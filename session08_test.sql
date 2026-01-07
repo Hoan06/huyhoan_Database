@@ -125,12 +125,23 @@ where guest_id not in (select distinct guest_id from bookings);
 
 
 -- Tìm phòng được đặt nhiều lần nhất
-select r.room_id 'id phòng', r.room_type 'loại phòng', count(b.booking_id) 'số lần được đặt'
-from rooms r
-join bookings b on r.room_id = b.room_id
-group by r.room_id, r.room_type
-order by count(b.booking_id) desc
-limit 1;
+select room_id, room_type, booking_count
+from (
+    select r.room_id, r.room_type, count(b.booking_id) as booking_count
+    from rooms r
+    join bookings b on r.room_id = b.room_id
+    group by r.room_id, r.room_type
+) as temp
+where booking_count = (
+    select max(count_per_room)
+    from (
+        select count(b.booking_id) as count_per_room
+        from rooms r
+        join bookings b on r.room_id = b.room_id
+        group by r.room_id
+    ) as sub
+);
+
 
 
 
